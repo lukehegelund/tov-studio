@@ -4,64 +4,121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TOV Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --green:#1A5E3A; --green-d:#124229; --bg:#0f1410; --card:#1a211b; --line:#2c3a2f;
-    --txt:#e8efe9; --mut:#9fb3a4; --gold:#F59E0B; --red:#DC2626; --blue:#5b9bd5;
+    --bg:#0c1210; --bg2:#0f1714; --card:#151e1a; --card2:#1a241f; --line:#27332c;
+    --green:#2E7D54; --green-l:#3fa06c; --green-d:#1A5E3A;
+    --txt:#eef3ef; --mut:#90a698; --gold:#E0A92E; --red:#e0564a; --blue:#5fa8d8;
+    --shadow:0 6px 24px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
-  a{color:var(--blue)}
-  /* login */
-  #login{max-width:360px;margin:14vh auto;padding:28px;background:var(--card);border:1px solid var(--line);border-radius:14px}
-  #login h1{font-size:22px;color:var(--green);margin-bottom:4px}
-  #login p{color:var(--mut);margin-bottom:18px;font-size:13px}
-  input{width:100%;padding:11px 12px;margin:6px 0;background:#0f1410;border:1px solid var(--line);border-radius:9px;color:var(--txt);font-size:15px}
-  button{cursor:pointer;border:0;border-radius:9px;font-weight:600;font-size:14px}
-  .btn{background:var(--green);color:#fff;padding:11px 14px;width:100%}
-  .btn:hover{background:var(--green-d)}
-  .err{color:var(--red);font-size:13px;min-height:18px}
-  /* app */
-  header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-  header .brand{font-weight:700;color:var(--green);font-size:18px;letter-spacing:.5px}
-  header .brand span{color:var(--mut);font-weight:400;font-size:12px;margin-left:8px}
-  .logout{background:transparent;color:var(--mut);padding:6px 10px;border:1px solid var(--line)}
-  nav{display:flex;gap:4px;padding:10px 14px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:53px;z-index:4}
-  nav button{background:transparent;color:var(--mut);padding:8px 14px;white-space:nowrap;border-radius:8px}
-  nav button.on{background:var(--green);color:#fff}
-  main{max-width:1000px;margin:0 auto;padding:18px 14px 80px}
-  section{display:none} section.on{display:block}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-  .stat .n{font-size:26px;font-weight:700}
-  .stat .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
-  .stat.g .n{color:var(--gold)} .stat.green .n{color:#4ade80} .stat.r .n{color:var(--red)}
-  h2{font-size:15px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin:22px 0 10px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
-  .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-  .pill{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
-  .New{background:#1e3a5f;color:#9cc4 f0} .Drafted{background:#4a3a14;color:var(--gold)}
-  .Responded{background:#14324a;color:var(--blue)} .Booked{background:#14422a;color:#4ade80}
-  .Declined{background:#3a1a1a;color:#f08a8a} .NoResponse{background:#333;color:#aaa}
+  body{font-family:Inter,-apple-system,Segoe UI,sans-serif;font-size:15px;line-height:1.55;
+    background:radial-gradient(1200px 600px at 70% -10%,#13201a 0%,var(--bg) 60%);color:var(--txt);min-height:100vh}
+  .serif{font-family:'Cormorant Garamond',Georgia,serif}
+  a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+  button{cursor:pointer;border:0;border-radius:10px;font-family:inherit;font-weight:600;font-size:14px;transition:.15s}
+  input,select,textarea{width:100%;padding:11px 13px;background:var(--bg2);border:1px solid var(--line);
+    border-radius:10px;color:var(--txt);font:inherit;font-size:15px;margin:5px 0}
+  input:focus,textarea:focus{outline:0;border-color:var(--green)}
+  .btn{background:var(--green);color:#fff;padding:11px 16px}
+  .btn:hover{background:var(--green-l)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--mut)}
+  .btn.ghost:hover{border-color:var(--green);color:var(--txt)}
+  .btn.sm{padding:8px 12px;font-size:13px}
+
+  /* LOGIN */
+  #login{max-width:380px;margin:13vh auto;padding:36px 30px;background:var(--card);
+    border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);text-align:center}
+  #login .logo{font-size:34px;color:var(--green-l);letter-spacing:1px}
+  #login .tag{color:var(--mut);font-size:13px;margin:2px 0 22px;letter-spacing:.5px}
+  #login input{text-align:left}
+  #login .btn{width:100%;margin-top:8px;padding:12px}
+  .err{color:var(--red);font-size:13px;min-height:18px;margin-top:6px}
+
+  /* SHELL */
+  header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;
+    background:rgba(15,23,20,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:20}
+  .brand{font-size:24px;color:var(--green-l);letter-spacing:1.5px;font-weight:700}
+  .brand small{font-size:11px;color:var(--mut);letter-spacing:2px;display:block;margin-top:-4px;font-family:Inter}
+  .acct{position:relative}
+  .acct .av{width:38px;height:38px;border-radius:50%;background:var(--green-d);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;border:1px solid var(--green)}
+  .menu{position:absolute;right:0;top:46px;background:var(--card2);border:1px solid var(--line);
+    border-radius:12px;box-shadow:var(--shadow);min-width:190px;padding:6px;display:none;z-index:30}
+  .menu.open{display:block}
+  .menu .em{padding:8px 10px;color:var(--mut);font-size:12px;border-bottom:1px solid var(--line);margin-bottom:4px;word-break:break-all}
+  .menu button{display:block;width:100%;text-align:left;background:transparent;color:var(--txt);padding:9px 10px}
+  .menu button:hover{background:var(--bg2)}
+
+  nav{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;max-width:1040px;margin:0 auto}
+  nav button{background:transparent;color:var(--mut);padding:9px 16px;white-space:nowrap;border-radius:22px}
+  nav button.on{background:var(--green);color:#fff;box-shadow:0 2px 10px rgba(46,125,84,.4)}
+  nav button:not(.on):hover{background:var(--card)}
+
+  main{max-width:1040px;margin:0 auto;padding:6px 16px 96px}
+  section{display:none;animation:fade .25s} section.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .head{display:flex;align-items:baseline;justify-content:space-between;margin:18px 2px 12px}
+  .head h2{font-size:26px;font-weight:600} .head .sub{color:var(--mut);font-size:13px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px}
+  .stat{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--line);
+    border-radius:16px;padding:18px}
+  .stat .n{font-size:28px;font-weight:700;font-family:'Cormorant Garamond',serif}
+  .stat .l{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+  .stat.gold .n{color:var(--gold)} .stat.grn .n{color:var(--green-l)} .stat.red .n{color:var(--red)}
+
+  h3.sec{font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:1.5px;margin:26px 4px 12px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:11px}
+  .card.click{cursor:pointer} .card.click:hover{border-color:var(--green);background:var(--card2)}
+  .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .muted{color:var(--mut);font-size:13px}
-  .draft{background:#0f1410;border:1px dashed var(--line);border-radius:9px;padding:10px;margin-top:8px;font-size:13px;white-space:pre-wrap;color:#cfe0d3}
-  .mini{padding:7px 11px;font-size:13px;width:auto;background:var(--green);color:#fff;margin-top:8px}
-  .mini.ghost{background:transparent;border:1px solid var(--line);color:var(--mut)}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
-  th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase}
-  .cmd{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;max-width:1000px;margin:0 auto}
-  .cmd input{margin:0}
-  .cmd button{width:auto;padding:0 18px;background:var(--green);color:#fff}
-  .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:10px 18px;border-radius:24px;opacity:0;transition:.3s;pointer-events:none}
-  .toast.show{opacity:1}
+  .pill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;white-space:nowrap;letter-spacing:.3px}
+  .s-New,.s-Lead{background:#15324d;color:#8fc3ee} .s-Drafted{background:#473714;color:var(--gold)}
+  .s-Responded,.s-Quoted{background:#123a4a;color:var(--blue)} .s-Booked,.s-InProduction{background:#143d2a;color:#5fd497}
+  .s-Declined,.s-Lost{background:#3d1f1c;color:#ef9a90} .s-Delivered,.s-Closed,.s-Signed{background:#1f3328;color:#7fae93}
+  .s-NoResponse,.s-None{background:#2a2f2c;color:#9aa}
+  .draft{background:var(--bg2);border:1px dashed var(--line);border-radius:11px;padding:12px;margin-top:10px;
+    font-size:13.5px;white-space:pre-wrap;color:#cfe0d4;line-height:1.5}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  tbody tr{cursor:pointer} tbody tr:hover{background:var(--card2)}
+
+  /* MODAL */
+  .overlay{position:fixed;inset:0;background:rgba(4,8,6,.7);backdrop-filter:blur(3px);display:none;
+    align-items:flex-start;justify-content:center;z-index:50;padding:20px;overflow:auto}
+  .overlay.open{display:flex}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+    max-width:560px;width:100%;margin:5vh 0;padding:24px}
+  .modal h3{font-size:24px;font-weight:600;margin-bottom:2px}
+  .modal .x{float:right;background:transparent;color:var(--mut);font-size:22px;padding:0 6px;line-height:1}
+  .kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .kv span{color:var(--mut)}
+  .filechip{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--line);
+    border-radius:10px;padding:9px 11px;margin:6px 0;font-size:13.5px}
+  .filechip .ic{color:var(--green-l)}
+
+  .cmd{position:fixed;bottom:0;left:0;right:0;z-index:25;background:rgba(15,23,20,.95);backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);padding:11px 16px}
+  .cmd-in{display:flex;gap:9px;max-width:1040px;margin:0 auto}
+  .cmd-in input{margin:0} .cmd-in button{width:auto;padding:0 20px;background:var(--green);color:#fff}
+  .toast{position:fixed;bottom:74px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--green);
+    color:#fff;padding:11px 20px;border-radius:24px;opacity:0;transition:.3s;pointer-events:none;z-index:60;box-shadow:var(--shadow);font-weight:600;font-size:14px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .empty{color:var(--mut);text-align:center;padding:30px;font-size:14px}
 </style>
 </head>
 <body>
 <!-- LOGIN -->
 <div id="login">
-  <h1>TOV Studio</h1>
-  <p>Take One Visuals — client command center</p>
+  <div class="logo serif">Take One Visuals</div>
+  <div class="tag">STUDIO · CLIENT COMMAND CENTER</div>
   <input id="email" type="email" placeholder="Email" autocomplete="username">
   <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
   <button class="btn" onclick="signIn()">Sign in</button>
@@ -71,41 +128,81 @@
 <!-- APP -->
 <div id="app" style="display:none">
   <header>
-    <div class="brand">TOV STUDIO <span id="hello"></span></div>
-    <button class="logout" onclick="signOut()">Sign out</button>
+    <div class="brand serif">TOV Studio<small>TAKE ONE VISUALS</small></div>
+    <div class="acct">
+      <div class="av" id="avatar" onclick="document.getElementById('acctMenu').classList.toggle('open')">L</div>
+      <div class="menu" id="acctMenu">
+        <div class="em" id="acctEmail"></div>
+        <button onclick="openPw()">Change password</button>
+        <button onclick="signOut()">Sign out</button>
+      </div>
+    </div>
   </header>
   <nav>
-    <button class="on" data-tab="dash" onclick="tab('dash',this)">Dashboard</button>
-    <button data-tab="leads" onclick="tab('leads',this)">Leads</button>
-    <button data-tab="clients" onclick="tab('clients',this)">Clients</button>
-    <button data-tab="money" onclick="tab('money',this)">Finances</button>
+    <button class="on" onclick="tab('dash',this)">Dashboard</button>
+    <button onclick="tab('leads',this)">Leads</button>
+    <button onclick="tab('clients',this)">Clients</button>
+    <button onclick="tab('money',this)">Finances</button>
+    <button onclick="tab('set',this)">Settings</button>
   </nav>
   <main>
     <section id="dash" class="on">
+      <div class="head"><h2 class="serif">Dashboard</h2><span class="sub" id="todayStr"></span></div>
       <div class="grid" id="stats"></div>
-      <h2>Needs your approval</h2>
+      <h3 class="sec">Needs your approval</h3>
       <div id="approvals"></div>
+      <h3 class="sec">Upcoming weddings</h3>
+      <div id="upcoming"></div>
     </section>
+
     <section id="leads">
-      <h2>Inquiry pipeline</h2>
+      <div class="head"><h2 class="serif">Leads</h2><span class="sub" id="leadCount"></span></div>
       <div id="leadList"></div>
     </section>
+
     <section id="clients">
-      <h2>Clients</h2>
-      <div class="card"><table id="clientTbl"></table></div>
+      <div class="head"><h2 class="serif">Clients</h2><span class="sub" id="clientCount"></span></div>
+      <div class="card" style="padding:6px 10px"><table id="clientTbl"></table></div>
     </section>
+
     <section id="money">
+      <div class="head"><h2 class="serif">Finances</h2>
+        <span><button class="btn ghost sm" onclick="openLog('payment')">+ Payment</button>
+        <button class="btn ghost sm" onclick="openLog('expense')">+ Expense</button></span></div>
       <div class="grid" id="moneyStats"></div>
-      <h2>Recent payments</h2>
-      <div class="card"><table id="payTbl"></table></div>
-      <h2>Recent expenses</h2>
-      <div class="card"><table id="expTbl"></table></div>
+      <h3 class="sec">Recent payments</h3><div class="card" style="padding:6px 10px"><table id="payTbl"></table></div>
+      <h3 class="sec">Recent expenses</h3><div class="card" style="padding:6px 10px"><table id="expTbl"></table></div>
+    </section>
+
+    <section id="set">
+      <div class="head"><h2 class="serif">Settings</h2></div>
+      <h3 class="sec">Account</h3>
+      <div class="card">
+        <div class="muted" style="margin-bottom:8px">Signed in as <b id="setEmail" style="color:var(--txt)"></b></div>
+        <button class="btn ghost sm" onclick="openPw()">Change password</button>
+      </div>
+      <h3 class="sec">Google Drive</h3>
+      <div class="card">
+        <div class="muted" id="driveStatus">Not linked yet.</div>
+        <p class="muted" style="margin:10px 0;font-size:13px">Share a Drive folder with<br>
+          <b style="color:var(--green-l)">claude-worker@claude-automation-488200.iam.gserviceaccount.com</b><br>
+          (give it Editor access), then paste the folder link below.</p>
+        <input id="driveRoot" placeholder="https://drive.google.com/drive/folders/…">
+        <button class="btn sm" onclick="setDriveRoot()">Link folder</button>
+        <button class="btn ghost sm" onclick="queueCmd('sync_drive:all','Syncing all client folders…')">Sync all clients</button>
+      </div>
     </section>
   </main>
-  <div class="cmd">
-    <input id="cmdBox" placeholder="Tell the agent what to do…  e.g. 'draft a reply to Yasaman'">
+
+  <div class="cmd"><div class="cmd-in">
+    <input id="cmdBox" placeholder="Ask the agent…  e.g. 'draft a contract for Krysta Beach'">
     <button onclick="sendCmd()">Send</button>
-  </div>
+  </div></div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBody"></div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -113,110 +210,224 @@
 <script>
 const SB_URL="https://oncsydqymaohrzertxln.supabase.co";
 const SB_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uY3N5ZHF5bWFvaHJ6ZXJ0eGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNTc1NjgsImV4cCI6MjA5NzczMzU2OH0.bBbl7jgS3kAoVpPkQyT_7iEEZpBzx_6Y73J78vpcnJs";
-const sb = supabase.createClient(SB_URL, SB_ANON);
+const sb=supabase.createClient(SB_URL,SB_ANON);
 const $=id=>document.getElementById(id);
+const esc=s=>(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const money=n=>'$'+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
-function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+let DATA={};
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+function tab(id,el){document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));
+  $(id).classList.add('on');el.classList.add('on');window.scrollTo(0,0);}
+document.addEventListener('click',e=>{if(!e.target.closest('.acct'))$('acctMenu').classList.remove('open');});
 
 async function signIn(){
   $('loginErr').textContent='';
   const {error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('pw').value});
-  if(error){$('loginErr').textContent=error.message;return;}
-  boot();
+  if(error){$('loginErr').textContent=error.message;return;} boot();
 }
 async function signOut(){await sb.auth.signOut();location.reload();}
-function tab(id,el){document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));
-  $(id).classList.add('on');el.classList.add('on');}
 
 async function boot(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){$('login').style.display='block';$('app').style.display='none';return;}
   $('login').style.display='none';$('app').style.display='block';
-  $('hello').textContent='· '+session.user.email;
+  const em=session.user.email; $('acctEmail').textContent=em; $('setEmail').textContent=em;
+  $('avatar').textContent=(em[0]||'L').toUpperCase();
+  $('todayStr').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   loadAll();
 }
 
 async function loadAll(){
-  const [{data:inq},{data:cl},{data:pay},{data:exp},{data:msgs}] = await Promise.all([
+  const [inq,cl,pay,exp,msg,setg]=await Promise.all([
     sb.from('inquiries').select('*').order('created_at',{ascending:false}),
-    sb.from('clients').select('*').order('wedding_date',{ascending:false}),
+    sb.from('clients').select('*').order('wedding_date',{ascending:false,nullsFirst:false}),
     sb.from('payments').select('*').order('date',{ascending:false}),
     sb.from('expenses').select('*').order('date',{ascending:false}),
     sb.from('messages').select('*').eq('status','draft').order('created_at',{ascending:false}),
+    sb.from('settings').select('*'),
   ]);
-  renderStats(inq,cl,pay,exp,msgs);
-  renderApprovals(msgs,inq);
-  renderLeads(inq);
-  renderClients(cl);
-  renderMoney(pay,exp);
+  DATA={inq:inq.data||[],cl:cl.data||[],pay:pay.data||[],exp:exp.data||[],msg:msg.data||[],
+        setg:Object.fromEntries((setg.data||[]).map(s=>[s.key,s.value]))};
+  renderDash();renderLeads();renderClients();renderMoney();renderSettings();
 }
 
-function renderStats(inq,cl,pay,exp,msgs){
-  const newLeads=inq.filter(i=>['New','Drafted'].includes(i.status)).length;
+function renderDash(){
+  const {inq,cl,pay,msg}=DATA;
+  const open=inq.filter(i=>['New','Drafted','Responded'].includes(i.status)).length;
   const booked=cl.filter(c=>['Booked','InProduction'].includes(c.status)).length;
-  const income=pay.reduce((s,p)=>s+Number(p.amount),0);
-  const balance=cl.reduce((s,c)=>s+Number(c.balance_due||0),0);
-  $('stats').innerHTML=[
-    ['g',newLeads,'Open leads'],['',msgs.length,'Drafts to review'],
-    ['green',booked,'Booked'],['green',money(income),'Income (tracked)'],
-    ['r',money(balance),'Balance due'],
-  ].map(([c,n,l])=>`<div class="stat ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
-}
-
-function renderApprovals(msgs,inq){
-  if(!msgs.length){$('approvals').innerHTML='<div class="card muted">Nothing waiting. The agent will drop new drafts here after each inbox scan.</div>';return;}
-  $('approvals').innerHTML=msgs.map(m=>{
+  const income=pay.reduce((s,p)=>s+ +p.amount,0);
+  const bal=cl.reduce((s,c)=>s+ +(c.balance_due||0),0);
+  $('stats').innerHTML=[['gold',open,'Open leads'],['',msg.length,'Drafts to review'],
+    ['grn',booked,'Booked'],['grn',money(income),'Income'],['red',money(bal),'Balance due']]
+    .map(([c,n,l])=>`<div class="stat ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+  $('approvals').innerHTML = msg.length ? msg.map(m=>{
     const who=(inq.find(i=>i.id===m.inquiry_id)||{}).name||m.to_address||'Lead';
-    return `<div class="card"><div class="row"><b>${who}</b><span class="pill Drafted">DRAFT · ${m.template_used||''}</span></div>
-      <div class="muted">${m.subject||''}</div>
-      <div class="draft">${(m.body||'').replace(/</g,'&lt;')}</div>
-      <button class="mini" onclick="approve(${m.id},'${who}')">✓ Approve → create Gmail draft</button>
-      <button class="mini ghost" onclick="discard(${m.id})">Discard</button></div>`;
-  }).join('');
+    return `<div class="card"><div class="row"><b>${esc(who)}</b><span class="pill s-Drafted">DRAFT · ${m.template_used||''}</span></div>
+      <div class="muted">${esc(m.subject||'')}</div><div class="draft">${esc(m.body||'')}</div>
+      <div class="actions"><button class="btn sm" onclick="approve(${m.id},'${esc(who)}')">✓ Approve → Gmail draft</button>
+      <button class="btn ghost sm" onclick="discard(${m.id})">Discard</button></div></div>`;}).join('')
+    : '<div class="empty">All caught up — new inbox drafts will appear here.</div>';
+  const up=cl.filter(c=>c.wedding_date && new Date(c.wedding_date)>=new Date()).sort((a,b)=>a.wedding_date<b.wedding_date?-1:1);
+  $('upcoming').innerHTML= up.length ? up.slice(0,6).map(c=>`<div class="card click" onclick="openClient(${c.id})">
+    <div class="row"><b>${esc(c.name)}</b><span class="muted">${c.wedding_date}</span></div>
+    <div class="muted">${esc(c.venue||'venue TBD')} · ${esc(c.package||'')}</div></div>`).join('')
+    : '<div class="empty">No upcoming weddings booked yet.</div>';
 }
 
-function renderLeads(inq){
-  $('leadList').innerHTML=inq.map(i=>`<div class="card"><div class="row">
-    <div><b>${i.name||'—'}</b><div class="muted">${i.venue||'venue TBD'} · ${i.wedding_date||'date TBD'} · ${i.source||''}</div></div>
-    <span class="pill ${i.status}">${i.status}</span></div>
-    ${i.message?`<div class="muted" style="margin-top:6px">${(i.message||'').slice(0,140).replace(/</g,'&lt;')}</div>`:''}</div>`).join('');
+function renderLeads(){
+  const {inq}=DATA; $('leadCount').textContent=inq.length+' total';
+  $('leadList').innerHTML=inq.map(i=>`<div class="card click" onclick="openLead(${i.id})">
+    <div class="row"><div><b>${esc(i.name||'—')}</b>
+      <div class="muted">${esc(i.venue||'venue TBD')} · ${i.wedding_date||'date TBD'} · ${i.source||''}</div></div>
+      <span class="pill s-${i.status}">${i.status}</span></div></div>`).join('');
 }
 
-function renderClients(cl){
-  $('clientTbl').innerHTML='<tr><th>Client</th><th>Date</th><th>Package</th><th>Status</th><th>Paid</th><th>Balance</th></tr>'+
-    cl.map(c=>`<tr><td>${c.name}</td><td>${c.wedding_date||'—'}</td><td>${(c.package||'').slice(0,22)}</td>
-      <td><span class="pill ${['Booked','InProduction'].includes(c.status)?'Booked':'NoResponse'}">${c.status}</span></td>
-      <td>${money(c.total_paid)}</td><td>${Number(c.balance_due)>0?money(c.balance_due):'—'}</td></tr>`).join('');
+function renderClients(){
+  const {cl}=DATA; $('clientCount').textContent=cl.length+' total';
+  $('clientTbl').innerHTML='<tr><th>Client</th><th>Date</th><th>Package</th><th>Status</th><th>Balance</th></tr>'+
+    cl.map(c=>`<tr onclick="openClient(${c.id})"><td><b>${esc(c.name)}</b></td><td>${c.wedding_date||'—'}</td>
+      <td>${esc((c.package||'').slice(0,20))}</td><td><span class="pill s-${c.status}">${c.status}</span></td>
+      <td>${+c.balance_due>0?money(c.balance_due):'<span class="muted">paid</span>'}</td></tr>`).join('');
 }
 
-function renderMoney(pay,exp){
-  const inc=pay.reduce((s,p)=>s+Number(p.amount),0), ex=exp.reduce((s,e)=>s+Number(e.amount),0);
-  $('moneyStats').innerHTML=[
-    ['green',money(inc),'Income'],['r',money(ex),'Expenses'],['g',money(inc-ex),'Net']
-  ].map(([c,n,l])=>`<div class="stat ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+function renderMoney(){
+  const {pay,exp}=DATA;
+  const inc=pay.reduce((s,p)=>s+ +p.amount,0), ex=exp.reduce((s,e)=>s+ +e.amount,0);
+  $('moneyStats').innerHTML=[['grn',money(inc),'Income'],['red',money(ex),'Expenses'],['gold',money(inc-ex),'Net']]
+    .map(([c,n,l])=>`<div class="stat ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
   $('payTbl').innerHTML='<tr><th>Date</th><th>Description</th><th>Amount</th></tr>'+
-    pay.slice(0,15).map(p=>`<tr><td>${p.date}</td><td>${(p.notes||p.type||'').slice(0,40)}</td><td>${money(p.amount)}</td></tr>`).join('');
+    pay.slice(0,18).map(p=>`<tr><td>${p.date}</td><td>${esc((p.notes||p.type||'').slice(0,42))}</td><td>${money(p.amount)}</td></tr>`).join('');
   $('expTbl').innerHTML='<tr><th>Date</th><th>Description</th><th>Cat</th><th>Amount</th></tr>'+
-    exp.slice(0,15).map(e=>`<tr><td>${e.date}</td><td>${(e.description||'').slice(0,34)}</td><td>${(e.category||'').slice(0,14)}</td><td>${money(e.amount)}</td></tr>`).join('');
+    exp.slice(0,18).map(e=>`<tr><td>${e.date}</td><td>${esc((e.description||'').slice(0,34))}</td><td>${esc((e.category||'').slice(0,14))}</td><td>${money(e.amount)}</td></tr>`).join('');
 }
 
-async function approve(msgId,who){
-  await sb.from('messages').update({status:'approved',approved_at:new Date().toISOString()}).eq('id',msgId);
-  await sb.from('command_queue').insert({command:'push_draft:'+msgId});
-  toast('Approved — agent will create the Gmail draft for '+who);
-  loadAll();
+function renderSettings(){
+  const name=DATA.setg.drive_root_folder_name, id=DATA.setg.drive_root_folder_id;
+  $('driveStatus').innerHTML= id ? `✅ Linked to <b style="color:var(--txt)">${esc(name||id)}</b>` : 'Not linked yet.';
 }
-async function discard(msgId){
-  await sb.from('messages').update({status:'discarded'}).eq('id',msgId);
-  toast('Discarded');loadAll();
+
+/* ---------- MODALS ---------- */
+function showModal(html){$('modalBody').innerHTML=html;$('overlay').classList.add('open');}
+function closeModal(){$('overlay').classList.remove('open');}
+
+function openClient(id){
+  const c=DATA.cl.find(x=>x.id===id); if(!c)return;
+  const pays=DATA.pay.filter(p=>p.client_id===id);
+  let files=[]; try{files=JSON.parse(c.drive_files_json||'[]')}catch(e){}
+  const fileHtml = files.length ? files.map(f=>`<div class="filechip"><span class="ic">▣</span>
+      <a href="${f.link}" target="_blank">${esc(f.name)}</a></div>`).join('')
+    : '<div class="muted" style="font-size:13px">No files synced. Link Drive in Settings, then Sync.</div>';
+  showModal(`<button class="x" onclick="closeModal()">×</button>
+    <h3 class="serif">${esc(c.name)}</h3><span class="pill s-${c.status}">${c.status}</span>
+    <div style="margin-top:14px">
+      <div class="kv"><span>Wedding</span><b>${c.wedding_date||'—'}</b></div>
+      <div class="kv"><span>Venue</span><b>${esc(c.venue||'—')}</b></div>
+      <div class="kv"><span>Package</span><b>${esc(c.package||'—')}</b></div>
+      <div class="kv"><span>Email</span><b>${esc(c.email||'—')}</b></div>
+      <div class="kv"><span>Phone</span><b>${esc(c.phone||'—')}</b></div>
+      <div class="kv"><span>Contracted</span><b>${money(c.total_contracted)}</b></div>
+      <div class="kv"><span>Paid</span><b>${money(c.total_paid)}</b></div>
+      <div class="kv"><span>Balance</span><b style="color:${+c.balance_due>0?'var(--gold)':'var(--green-l)'}">${money(c.balance_due)}</b></div>
+      <div class="kv"><span>Contract</span><b>${c.contract_status}</b></div>
+    </div>
+    <h3 class="sec" style="margin:18px 0 8px">Drive files</h3>${fileHtml}
+    <div class="actions" style="margin-top:16px">
+      <button class="btn sm" onclick="queueCmd('gen_contract:${id}','Generating contract for ${esc(c.name)}…');closeModal()">Generate contract</button>
+      <button class="btn ghost sm" onclick="queueCmd('sync_drive:${id}','Syncing Drive files…');closeModal()">Sync Drive</button>
+      <button class="btn ghost sm" onclick="queueCmd('send_files:${id}','Drafting email with files…');closeModal()">Draft files email</button>
+      <button class="btn ghost sm" onclick="openLogFor(${id})">Log payment</button>
+    </div>`);
 }
-async function sendCmd(){
-  const v=$('cmdBox').value.trim();if(!v)return;
-  await sb.from('command_queue').insert({command:v});
-  $('cmdBox').value='';toast('Sent to agent');
+
+function openLead(id){
+  const i=DATA.inq.find(x=>x.id===id); if(!i)return;
+  showModal(`<button class="x" onclick="closeModal()">×</button>
+    <h3 class="serif">${esc(i.name||'Lead')}</h3><span class="pill s-${i.status}">${i.status}</span>
+    <div style="margin-top:14px">
+      <div class="kv"><span>Wedding</span><b>${i.wedding_date||'—'}</b></div>
+      <div class="kv"><span>Venue</span><b>${esc(i.venue||'—')}</b></div>
+      <div class="kv"><span>Email</span><b>${esc(i.email||'—')}</b></div>
+      <div class="kv"><span>Source</span><b>${i.source||'—'}</b></div>
+    </div>
+    ${i.message?`<div class="draft" style="margin-top:12px">${esc(i.message)}</div>`:''}
+    <div class="actions" style="margin-top:16px">
+      ${i.client_id?'':`<button class="btn sm" onclick="convertLead(${id})">Convert to client</button>`}
+      <button class="btn ghost sm" onclick="closeModal()">Close</button>
+    </div>`);
 }
-$('cmdBox')&&$('cmdBox').addEventListener('keydown',e=>{if(e.key==='Enter')sendCmd();});
+
+async function convertLead(id){
+  const i=DATA.inq.find(x=>x.id===id);
+  const {data,error}=await sb.from('clients').insert({name:i.name,email:i.email,phone:i.phone,
+    wedding_date:i.wedding_date,venue:i.venue,source:i.source||'Other',status:'Booked'}).select().single();
+  if(error){toast('Error: '+error.message);return;}
+  await sb.from('inquiries').update({status:'Booked',client_id:data.id}).eq('id',id);
+  toast(i.name+' added as a client');closeModal();loadAll();
+}
+
+/* ---------- LOG PAYMENT / EXPENSE ---------- */
+let logClientId=null;
+function openLog(kind){logClientId=null;logForm(kind);}
+function openLogFor(cid){logClientId=cid;closeModal();logForm('payment');}
+function logForm(kind){
+  showModal(`<button class="x" onclick="closeModal()">×</button>
+    <h3 class="serif">Log ${kind}</h3>
+    <input id="lAmt" type="number" placeholder="Amount ($)">
+    <input id="lDesc" placeholder="Description">
+    <input id="lDate" type="date" value="${new Date().toISOString().slice(0,10)}">
+    ${kind==='expense'?'<input id="lCat" placeholder="Category">':''}
+    <button class="btn" style="margin-top:10px" onclick="saveLog('${kind}')">Save</button>`);
+}
+async function saveLog(kind){
+  const amt=+$('lAmt').value, desc=$('lDesc').value, date=$('lDate').value;
+  if(!amt){toast('Enter an amount');return;}
+  if(kind==='payment'){
+    await sb.from('payments').insert({amount:amt,notes:desc,date,type:'Partial',client_id:logClientId});
+    if(logClientId){const c=DATA.cl.find(x=>x.id===logClientId);
+      await sb.from('clients').update({total_paid:(+c.total_paid)+amt}).eq('id',logClientId);}
+  }else{
+    await sb.from('expenses').insert({amount:amt,description:desc,date,category:$('lCat').value,fiscal_year:new Date(date).getFullYear()});
+  }
+  toast(kind+' logged');closeModal();loadAll();
+}
+
+/* ---------- PASSWORD ---------- */
+function openPw(){$('acctMenu').classList.remove('open');
+  showModal(`<button class="x" onclick="closeModal()">×</button>
+    <h3 class="serif">Change password</h3>
+    <input id="np" type="password" placeholder="New password (min 6 chars)">
+    <input id="np2" type="password" placeholder="Confirm new password">
+    <div class="err" id="pwErr"></div>
+    <button class="btn" style="margin-top:8px" onclick="savePw()">Update password</button>`);}
+async function savePw(){
+  const a=$('np').value,b=$('np2').value;
+  if(a.length<6){$('pwErr').textContent='At least 6 characters';return;}
+  if(a!==b){$('pwErr').textContent='Passwords do not match';return;}
+  const {error}=await sb.auth.updateUser({password:a});
+  if(error){$('pwErr').textContent=error.message;return;}
+  toast('Password updated');closeModal();
+}
+
+/* ---------- DRIVE ROOT ---------- */
+async function setDriveRoot(){
+  const v=$('driveRoot').value.trim(); if(!v){toast('Paste a folder link');return;}
+  await sb.from('command_queue').insert({command:'set_root:'+v});
+  toast('Linking folder… the agent will confirm on its next run');
+}
+
+/* ---------- SHARED ACTIONS ---------- */
+async function approve(id,who){
+  await sb.from('messages').update({status:'approved',approved_at:new Date().toISOString()}).eq('id',id);
+  await sb.from('command_queue').insert({command:'push_draft:'+id});
+  toast('Approved — Gmail draft coming for '+who);loadAll();
+}
+async function discard(id){await sb.from('messages').update({status:'discarded'}).eq('id',id);toast('Discarded');loadAll();}
+async function queueCmd(cmd,msg){await sb.from('command_queue').insert({command:cmd});toast(msg||'Queued');}
+async function sendCmd(){const v=$('cmdBox').value.trim();if(!v)return;
+  await sb.from('command_queue').insert({command:v});$('cmdBox').value='';toast('Sent to agent');}
+$('cmdBox').addEventListener('keydown',e=>{if(e.key==='Enter')sendCmd();});
 $('pw').addEventListener('keydown',e=>{if(e.key==='Enter')signIn();});
 boot();
 </script>
