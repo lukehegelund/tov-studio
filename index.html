@@ -188,6 +188,13 @@
         <div class="muted" style="margin-bottom:8px">Signed in as <b id="setEmail" style="color:var(--txt)"></b></div>
         <button class="btn ghost sm" onclick="openPw()">Change password</button>
       </div>
+      <h3 class="sec">Booking horizon</h3>
+      <div class="card">
+        <div class="muted">Auto-reply <b style="color:var(--txt)">“not booking that far ahead yet”</b> for any wedding on or after this date:</div>
+        <input id="cutoff" type="date" style="max-width:220px">
+        <button class="btn sm" onclick="saveCutoff()">Save</button>
+        <div class="muted" style="font-size:12px;margin-top:8px">Leave earlier dates to availability-based drafting. Change anytime.</div>
+      </div>
       <h3 class="sec">Google Drive</h3>
       <div class="card">
         <div class="muted" id="driveStatus">Not linked yet.</div>
@@ -342,6 +349,12 @@ function renderCalendar(){
 function renderSettings(){
   const name=DATA.setg.drive_root_folder_name, id=DATA.setg.drive_root_folder_id;
   $('driveStatus').innerHTML= id ? `✅ Linked to <b style="color:var(--txt)">${esc(name||id)}</b>` : 'Not linked yet.';
+  if(DATA.setg.booking_cutoff_date) $('cutoff').value=DATA.setg.booking_cutoff_date;
+}
+async function saveCutoff(){
+  const v=$('cutoff').value; if(!v){toast('Pick a date');return;}
+  await sb.from('settings').update({value:v}).eq('key','booking_cutoff_date');
+  toast('Saved — far-out leads will get the “not booking yet” reply');
 }
 
 /* ---------- MODALS ---------- */
