@@ -143,6 +143,7 @@
     <button onclick="tab('leads',this)">Leads</button>
     <button onclick="tab('clients',this)">Clients</button>
     <button onclick="tab('money',this)">Finances</button>
+    <button onclick="tab('cal',this)">Calendar</button>
     <button onclick="tab('set',this)">Settings</button>
   </nav>
   <main>
@@ -172,6 +173,12 @@
       <div class="grid" id="moneyStats"></div>
       <h3 class="sec">Recent payments</h3><div class="card" style="padding:6px 10px"><table id="payTbl"></table></div>
       <h3 class="sec">Recent expenses</h3><div class="card" style="padding:6px 10px"><table id="expTbl"></table></div>
+    </section>
+
+    <section id="cal">
+      <div class="head"><h2 class="serif">Calendar</h2>
+        <button class="btn ghost sm" onclick="queueCmd('sync_calendar','Syncing your Google Calendar…')">Sync now</button></div>
+      <div id="calAgenda"></div>
     </section>
 
     <section id="set">
@@ -240,17 +247,18 @@ async function boot(){
 }
 
 async function loadAll(){
-  const [inq,cl,pay,exp,msg,setg]=await Promise.all([
+  const [inq,cl,pay,exp,msg,setg,cal]=await Promise.all([
     sb.from('inquiries').select('*').order('created_at',{ascending:false}),
     sb.from('clients').select('*').order('wedding_date',{ascending:false,nullsFirst:false}),
     sb.from('payments').select('*').order('date',{ascending:false}),
     sb.from('expenses').select('*').order('date',{ascending:false}),
     sb.from('messages').select('*').eq('status','draft').order('created_at',{ascending:false}),
     sb.from('settings').select('*'),
+    sb.from('calendar_events').select('*').order('start_at',{ascending:true}),
   ]);
   DATA={inq:inq.data||[],cl:cl.data||[],pay:pay.data||[],exp:exp.data||[],msg:msg.data||[],
-        setg:Object.fromEntries((setg.data||[]).map(s=>[s.key,s.value]))};
-  renderDash();renderLeads();renderClients();renderMoney();renderSettings();
+        setg:Object.fromEntries((setg.data||[]).map(s=>[s.key,s.value])),cal:cal.data||[]};
+  renderDash();renderLeads();renderClients();renderMoney();renderSettings();renderCalendar();
 }
 
 function renderDash(){
@@ -301,6 +309,22 @@ function renderMoney(){
     pay.slice(0,18).map(p=>`<tr><td>${p.date}</td><td>${esc((p.notes||p.type||'').slice(0,42))}</td><td>${money(p.amount)}</td></tr>`).join('');
   $('expTbl').innerHTML='<tr><th>Date</th><th>Description</th><th>Cat</th><th>Amount</th></tr>'+
     exp.slice(0,18).map(e=>`<tr><td>${e.date}</td><td>${esc((e.description||'').slice(0,34))}</td><td>${esc((e.category||'').slice(0,14))}</td><td>${money(e.amount)}</td></tr>`).join('');
+}
+
+function renderCalendar(){
+  const evs=DATA.cal||[];
+  if(!evs.length){$('calAgenda').innerHTML='<div class="empty">No calendar events yet.<br>Authorize Google Calendar, then tap “Sync now”.</div>';return;}
+  const fmtDay=d=>new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  const dayOf=e=>(e.start_at||'').slice(0,10);
+  const fmtTime=e=>e.all_day?'All day':new Date(e.start_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const groups={};
+  evs.forEach(e=>{(groups[dayOf(e)]=groups[dayOf(e)]||[]).push(e);});
+  $('calAgenda').innerHTML=Object.keys(groups).sort().map(day=>`
+    <div class="card"><div class="muted" style="font-weight:600;color:var(--txt);margin-bottom:6px">${fmtDay(day)}</div>
+    ${groups[day].map(e=>`<div class="row" style="padding:4px 0">
+      <div>${e.is_booked?'<span class="pill s-Booked">BOOKED</span> ':''}<b>${esc(e.title)}</b>
+        ${e.location?`<div class="muted">${esc(e.location)}</div>`:''}</div>
+      <span class="muted">${fmtTime(e)}</span></div>`).join('')}</div>`).join('');
 }
 
 function renderSettings(){
