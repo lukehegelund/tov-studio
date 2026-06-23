@@ -221,6 +221,9 @@ const sb=supabase.createClient(SB_URL,SB_ANON);
 const $=id=>document.getElementById(id);
 const esc=s=>(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const money=n=>'$'+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+const gmailThread=t=>`https://mail.google.com/mail/u/0/#all/${t}`;
+const calDay=d=>{if(!d)return null;const p=d.slice(0,10).split('-');return `https://calendar.google.com/calendar/u/0/r/day/${+p[0]}/${+p[1]}/${+p[2]}`;};
+const dateLink=d=>d?`<a href="${calDay(d)}" target="_blank" title="View on Google Calendar">${d} 📅</a>`:'—';
 let DATA={};
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
@@ -271,12 +274,21 @@ function renderDash(){
     ['grn',booked,'Booked'],['grn',money(income),'Income'],['red',money(bal),'Balance due']]
     .map(([c,n,l])=>`<div class="stat ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
   $('approvals').innerHTML = msg.length ? msg.map(m=>{
-    const who=(inq.find(i=>i.id===m.inquiry_id)||{}).name||m.to_address||'Lead';
-    return `<div class="card"><div class="row"><b>${esc(who)}</b><span class="pill s-Drafted">DRAFT · ${m.template_used||''}</span></div>
-      <div class="muted">${esc(m.subject||'')}</div><div class="draft">${esc(m.body||'')}</div>
-      <div class="actions"><button class="btn sm" onclick="approve(${m.id},'${esc(who)}')">✓ Approve → Gmail draft</button>
-      <button class="btn ghost sm" onclick="discard(${m.id})">Discard</button></div></div>`;}).join('')
-    : '<div class="empty">All caught up — new inbox drafts will appear here.</div>';
+    const i=inq.find(x=>x.id===m.inquiry_id)||{};
+    const who=i.name||m.to_address||'Lead';
+    const inGmail=!!m.gmail_draft_id;
+    const gLink=m.gmail_thread_id?`<a href="${gmailThread(m.gmail_thread_id)}" target="_blank">✉️ Open in Gmail</a>`:'';
+    const cLink=i.wedding_date?`<a href="${calDay(i.wedding_date)}" target="_blank">📅 ${i.wedding_date} on Calendar</a>`:'';
+    return `<div class="card"><div class="row"><b>${esc(who)}</b>
+        <span class="pill ${inGmail?'s-Booked':'s-Drafted'}">${inGmail?'IN GMAIL':'APP ONLY'} · ${m.template_used||''}</span></div>
+      <div class="muted" style="margin:2px 0 8px">${esc(m.subject||'')} ${cLink?'· '+cLink:''} ${gLink?'· '+gLink:''}</div>
+      <textarea id="body_${m.id}" rows="6">${esc(m.body||'')}</textarea>
+      <div class="actions">
+        <button class="btn sm" onclick="saveDraft(${m.id})">💾 Save → Gmail</button>
+        ${inGmail?'':`<button class="btn ghost sm" onclick="queueCmd('push_draft:${m.id}','Creating Gmail draft…')">Create Gmail draft</button>`}
+        <button class="btn ghost sm" onclick="discard(${m.id})">Discard</button>
+      </div></div>`;}).join('')
+    : '<div class="empty">All caught up — new inbox drafts appear here and in your Gmail Drafts automatically.</div>';
   const up=cl.filter(c=>c.wedding_date && new Date(c.wedding_date)>=new Date()).sort((a,b)=>a.wedding_date<b.wedding_date?-1:1);
   $('upcoming').innerHTML= up.length ? up.slice(0,6).map(c=>`<div class="card click" onclick="openClient(${c.id})">
     <div class="row"><b>${esc(c.name)}</b><span class="muted">${c.wedding_date}</span></div>
@@ -346,7 +358,7 @@ function openClient(id){
   showModal(`<button class="x" onclick="closeModal()">×</button>
     <h3 class="serif">${esc(c.name)}</h3><span class="pill s-${c.status}">${c.status}</span>
     <div style="margin-top:14px">
-      <div class="kv"><span>Wedding</span><b>${c.wedding_date||'—'}</b></div>
+      <div class="kv"><span>Wedding</span><b>${dateLink(c.wedding_date)}</b></div>
       <div class="kv"><span>Venue</span><b>${esc(c.venue||'—')}</b></div>
       <div class="kv"><span>Package</span><b>${esc(c.package||'—')}</b></div>
       <div class="kv"><span>Email</span><b>${esc(c.email||'—')}</b></div>
@@ -370,7 +382,7 @@ function openLead(id){
   showModal(`<button class="x" onclick="closeModal()">×</button>
     <h3 class="serif">${esc(i.name||'Lead')}</h3><span class="pill s-${i.status}">${i.status}</span>
     <div style="margin-top:14px">
-      <div class="kv"><span>Wedding</span><b>${i.wedding_date||'—'}</b></div>
+      <div class="kv"><span>Wedding</span><b>${dateLink(i.wedding_date)}</b></div>
       <div class="kv"><span>Venue</span><b>${esc(i.venue||'—')}</b></div>
       <div class="kv"><span>Email</span><b>${esc(i.email||'—')}</b></div>
       <div class="kv"><span>Source</span><b>${i.source||'—'}</b></div>
@@ -442,10 +454,11 @@ async function setDriveRoot(){
 }
 
 /* ---------- SHARED ACTIONS ---------- */
-async function approve(id,who){
-  await sb.from('messages').update({status:'approved',approved_at:new Date().toISOString()}).eq('id',id);
-  await sb.from('command_queue').insert({command:'push_draft:'+id});
-  toast('Approved — Gmail draft coming for '+who);loadAll();
+async function saveDraft(id){
+  const body=document.getElementById('body_'+id).value;
+  await sb.from('messages').update({body}).eq('id',id);
+  await sb.from('command_queue').insert({command:'update_draft:'+id});
+  toast('Saved — your Gmail draft updates within ~3 min');
 }
 async function discard(id){await sb.from('messages').update({status:'discarded'}).eq('id',id);toast('Discarded');loadAll();}
 async function queueCmd(cmd,msg){await sb.from('command_queue').insert({command:cmd});toast(msg||'Queued');}
