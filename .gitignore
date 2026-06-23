@@ -1,3 +1,9 @@
 SECRETS*
 *.local.*
 .DS_Store
+agent/tov_supabase_keys.json
+agent/gmail_token.json
+agent/service_account.json
+agent/SECRETS.local.txt
+agent/__pycache__/
+agent/*.log

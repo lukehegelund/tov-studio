@@ -1,0 +1,41 @@
+name: TOV Studio Agent
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # every 5 minutes (GitHub's minimum)
+  workflow_dispatch:          # allow manual runs
+
+concurrency:
+  group: tov-agent
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install deps
+        run: pip install requests google-auth google-auth-oauthlib anthropic
+      - name: Materialize credentials from secrets
+        working-directory: agent
+        run: |
+          printf '%s' "$SUPABASE_KEYS_JSON"   > tov_supabase_keys.json
+          printf '%s' "$GMAIL_TOKEN_JSON"     > gmail_token.json
+          printf '%s' "$SERVICE_ACCOUNT_JSON" > service_account.json
+          printf '%s' "$SECRETS_LOCAL"        > SECRETS.local.txt
+        env:
+          SUPABASE_KEYS_JSON:   ${{ secrets.SUPABASE_KEYS_JSON }}
+          GMAIL_TOKEN_JSON:     ${{ secrets.GMAIL_TOKEN_JSON }}
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          SECRETS_LOCAL:        ${{ secrets.SECRETS_LOCAL }}
+      - name: Run agent pipeline
+        working-directory: agent
+        run: |
+          python detect_sent.py
+          python followups.py
+          python scan_inquiries.py --push --days 14 --max 25
+          python ai_interpreter.py
+          python process_commands.py
